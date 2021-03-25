@@ -16,6 +16,9 @@ import Attributes from './model';
  */
 export interface JourneyInstance extends JourneyAttributes, Document {}
 
+/**
+ * Destination attributes.
+ */
 export interface DestinationAttributes {
   city: string;
   lat: number;
@@ -23,6 +26,9 @@ export interface DestinationAttributes {
   images: ImageAttributes[];
 }
 
+/**
+ * Image attributes.
+ */
 export interface ImageAttributes {
   url: string;
 }
