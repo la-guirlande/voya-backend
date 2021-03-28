@@ -2,11 +2,13 @@ import mongooseToJson from '@meanie/mongoose-to-json';
 import { Document, Model, Mongoose, Schema } from 'mongoose';
 import ServiceContainer from '../services/service-container';
 import Attributes from './model';
+import { UserInstance } from './user-model';
 
 /**
  * Journey attributes.
  */
  export interface JourneyAttributes extends Attributes {
+  owner: UserInstance;
   public: boolean;
   destinations: DestinationAttributes[];
 }
@@ -50,6 +52,11 @@ export default function createSchema(container: ServiceContainer, mongoose: Mong
  */
 function createJourneySchema() {
   const schema = new Schema({
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'Owner is required']
+    },
     public: {
       type: Schema.Types.Boolean,
       default: false
