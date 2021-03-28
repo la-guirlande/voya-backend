@@ -29,14 +29,14 @@ export default class UserController extends Controller {
   }
 
   /**
-     * Returns the authenticated user.
-     * 
-     * Path : `GET /users/info`
-     * 
-     * @param req Express request
-     * @param res Express response
-     * @async
-     */
+   * Returns the authenticated user.
+   * 
+   * Path : `GET /users/info`
+   * 
+   * @param req Express request
+   * @param res Express response
+   * @async
+   */
   public async infoHandler(req: Request, res: Response): Promise<Response> {
     try {
       const authUser: UserInstance = res.locals.authUser;
