@@ -22,6 +22,8 @@ export default class UserController extends Controller {
     this.registerEndpoint({ method: 'PUT', uri: '/:id', handlers: this.modifyHandler });
     this.registerEndpoint({ method: 'PATCH', uri: '/:id', handlers: this.updateHandler });
     this.registerEndpoint({ method: 'DELETE', uri: '/:id', handlers: this.deleteHandler });
+    this.registerEndpoint({ method: 'GET', uri: '/:id/journeys', handlers: this.listJourneysHandler });
+    this.registerEndpoint({ method: 'POST', uri: '/:id/journeys', handlers: this.createJourneyHandler });
   }
 
   /**
@@ -202,6 +204,61 @@ export default class UserController extends Controller {
         }));
       }
       return res.status(204).send();
+    } catch (err) {
+      this.logger.error(err);
+      return res.status(500).send(this.container.errors.formatServerError());
+    }
+  }
+
+  /**
+   * Lists user journeys.
+   * 
+   * Path: `GET /users/:id/journeys`
+   * 
+   * @param req Express request
+   * @param res Express response
+   * @async
+   */
+  public async listJourneysHandler(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = await this.db.users.findById(req.params.id);
+      if (user == null) {
+        return res.status(404).send(this.container.errors.formatErrors({
+          error: 'not_found',
+          error_description: 'User not found'
+        }));
+      }
+      return res.status(200).send({ journeys: user.journeys });
+    } catch (err) {
+      this.logger.error(err);
+      return res.status(500).send(this.container.errors.formatServerError());
+    }
+  }
+
+  /**
+   * Creates user journey.
+   * 
+   * Path: `POST /users/:id/journeys`
+   * 
+   * @param req Express request
+   * @param res Express response
+   * @async
+   */
+  public async createJourneyHandler(req: Request, res: Response): Promise<Response> {
+    try {
+      const user = await this.db.users.findById(req.params.id);
+      if (user == null) {
+        return res.status(404).send(this.container.errors.formatErrors({
+          error: 'not_found',
+          error_description: 'User not found'
+        }));
+      }
+      const journey = await this.db.journeys.create({
+        owner: user,
+        public: req.body.public,
+        destinations: req.body.destinations
+      });
+      return res.status(201).send({ journey });
     } catch (err) {
       this.logger.error(err);
       return res.status(500).send(this.container.errors.formatServerError());
