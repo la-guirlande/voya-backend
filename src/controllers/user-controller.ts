@@ -78,11 +78,7 @@ export default class UserController extends Controller {
    */
   public async createHandler(req: Request, res: Response): Promise<Response> {
     try {
-      const user = await this.db.users.create({
-        email: req.body.email,
-        name: req.body.name,
-        password: req.body.password
-      });
+      const user = await this.db.users.create(req.body);
       res.setHeader('Location', `${req.protocol}://${req.get('host')}${this.rootUri}/${user.id}`);
       return res.status(201).send({
         id: user.id,
