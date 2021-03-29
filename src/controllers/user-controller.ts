@@ -63,7 +63,7 @@ export default class UserController extends Controller {
    */
   public async listHandler(req: Request, res: Response): Promise<Response> {
     try {
-      return res.status(200).send({ users: await this.db.users.find() });
+      return res.status(200).send({ users: await this.db.users.find().populate('journeys') });
     } catch (err) {
       this.logger.error(err);
       return res.status(500).send(this.container.errors.formatServerError());
@@ -81,7 +81,7 @@ export default class UserController extends Controller {
    */
   public async getHandler(req: Request, res: Response): Promise<Response> {
     try {
-      const user = await this.db.users.findById(req.params.id);
+      const user = await this.db.users.findById(req.params.id).populate('journeys');
       if (user == null) {
         return res.status(404).send(this.container.errors.formatErrors({
           error: 'not_found',
@@ -284,7 +284,7 @@ export default class UserController extends Controller {
         public: req.body.public,
         destinations: req.body.destinations
       });
-      return res.status(201).send({ journey });
+      return res.status(201).send({ id: journey.id });
     } catch (err) {
       this.logger.error(err);
       return res.status(500).send(this.container.errors.formatServerError());
